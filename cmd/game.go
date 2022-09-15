@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"math/rand"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -30,26 +31,34 @@ type board [][]*cell
 // y
 
 func main() {
-	b := createBoard(8, 8)
+	b := createBoard(4, 4)
 	linkNeighbors(b)
-	populate(b, 12)
+	populate(b, 3)
 	render(b)
 }
 
 func render(b board) {
-	for _, row := range b {
+	for i := -1; i < len(b[0]); i++ {
+		if i < 0 {
+			fmt.Printf("  |")
+			continue
+		}
+		fmt.Printf("%2d.|", i)
+	}
+	fmt.Printf("\n%s\n", strings.Repeat("-", len(b[0])*4+3))
+	for i, row := range b {
+		fmt.Printf("%d.|", i)
 		for _, c := range row {
-			v := ""
+			v := " "
 			if c.isBlackHole {
 				v = "H"
 			} else {
-				if cnt := c.nearHoles(); cnt > 0 {
-					v = strconv.Itoa(cnt)
-				}
+				v = strconv.Itoa(c.nearHoles())
 			}
-			fmt.Printf("\t%s", v)
+			fmt.Printf("%2s |", v)
 		}
-		fmt.Print("\n")
+
+		fmt.Printf("\n%s\n", strings.Repeat("-", len(b[0])*4+3))
 	}
 }
 
