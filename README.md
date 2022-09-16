@@ -21,7 +21,7 @@ Methods in cmd/game.go main.userInput() and main.render() only for demonstration
 
 ## How to play:
 
-    go run cmd/
+    go run cmd/game.go
 
 then enter coordinates: X,Y
 they must be integers, separated by coma, without spaces
