@@ -2,8 +2,8 @@
 
 The programm consist of 2 main entities:
 
-Cell -- represent a cell, may contain a black hole
-Board -- represent the game board, consists of cells. Is a 2D slice of pointers to Cell objects
+* Cell -- represent a cell, may contain a black hole
+* Board -- represent the game board, consists of cells. Is a 2D slice of pointers to Cell objects
 
 After creating a board method Board.LinkNeighbors() must be called to prepare cells.
 This method finds and stores all neighbors of the cell.
