@@ -1,8 +1,10 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"math/rand"
+	"os"
 	"strconv"
 	"strings"
 	"time"
@@ -31,10 +33,67 @@ type board [][]*cell
 // y
 
 func main() {
+	// create empty board with requested size
 	b := createBoard(4, 4)
+	// link all neighbors, to allow easy calculation and operations with neighbors
 	linkNeighbors(b)
+	// add mines to the board
 	populate(b, 3)
+	// render the board to the console
 	render(b)
+	reader := bufio.NewReader(os.Stdin)
+	for {
+		t, _ := reader.ReadString('\n')
+		t = strings.Replace(t, "\n", "", -1)
+		coordinates := strings.Split(t, ",")
+		if len(coordinates) != 2 {
+			fmt.Println("wrong format, expected coordinates x,y")
+			continue
+		}
+		x, err := strconv.Atoi(coordinates[0])
+		if err != nil {
+			fmt.Println("the x is not an integer")
+			continue
+		}
+		y, err := strconv.Atoi(coordinates[1])
+		if err != nil {
+			fmt.Println("the y is not an integer")
+			continue
+		}
+		if err := b.click(x, y); err != nil {
+			fmt.Printf("error: %v", err)
+			continue
+		}
+		fmt.Println("\n====")
+		render(b)
+	}
+}
+
+func (b board) click(x, y int) error {
+	c, ok := getCell(b, x, y)
+	if !ok {
+		return fmt.Errorf("cannot click on the cell, wrong coordinates")
+	}
+	if !c.click() {
+		fmt.Printf("you loose.")
+	}
+	return nil
+}
+
+func (c *cell) click() bool {
+	if c.isOpen {
+		return true
+	}
+	if c.isBlackHole {
+		return false
+	}
+	c.isOpen = true
+	if c.nearHoles() == 0 {
+		for _, n := range c.neighbors {
+			n.click()
+		}
+	}
+	return true
 }
 
 func render(b board) {
@@ -50,10 +109,12 @@ func render(b board) {
 		fmt.Printf("%d.|", i)
 		for _, c := range row {
 			v := " "
-			if c.isBlackHole {
-				v = "H"
-			} else {
-				v = strconv.Itoa(c.nearHoles())
+			if c.isOpen {
+				if c.isBlackHole {
+					v = "H"
+				} else {
+					v = strconv.Itoa(c.nearHoles())
+				}
 			}
 			fmt.Printf("%2s |", v)
 		}
