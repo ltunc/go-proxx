@@ -12,6 +12,7 @@ type Board [][]*Cell
 // y
 // y
 
+// NewBoard creates a board with requested dimensions
 func NewBoard(w, h int) Board {
 	b := make(Board, w)
 	for i := 0; i < h; i++ {
@@ -106,6 +107,9 @@ func (b Board) Populate(k int) error {
 	return nil
 }
 
+// Click processes user's input (click)
+// returns true if click was successful and not on a black hole,
+// returns false if the user clicked on a black hole
 func (b Board) Click(x, y int) (bool, error) {
 	c, ok := b.GetCell(x, y)
 	if !ok {
@@ -117,6 +121,7 @@ func (b Board) Click(x, y int) (bool, error) {
 	return true, nil
 }
 
+// OpenAll marks all cells of the board as open
 func (b Board) OpenAll() {
 	for _, row := range b {
 		for _, c := range row {
