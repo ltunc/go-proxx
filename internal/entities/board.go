@@ -26,9 +26,9 @@ func NewBoard(w, h int) Board {
 	return b
 }
 
-// GetCell finds and returns a cell by its coordinates on the board
+// getCell finds and returns a cell by its coordinates on the board
 // returns false if cell not exist (coordinates are outside the board)
-func (b Board) GetCell(x, y int) (*Cell, bool) {
+func (b Board) getCell(x, y int) (*Cell, bool) {
 	if x < 0 || y < 0 {
 		return nil, false
 	}
@@ -46,36 +46,38 @@ func (b Board) GetCell(x, y int) (*Cell, bool) {
 func (b Board) LinkNeighbors() {
 	for y, row := range b {
 		for x, c := range row {
+			// reset all current neighbors
+			c.neighbors = nil
 			// up left
-			if p, ok := b.GetCell(x-1, y-1); ok {
+			if p, ok := b.getCell(x-1, y-1); ok {
 				c.neighbors = append(c.neighbors, p)
 			}
 			// up
-			if p, ok := b.GetCell(x, y-1); ok {
+			if p, ok := b.getCell(x, y-1); ok {
 				c.neighbors = append(c.neighbors, p)
 			}
 			// up right
-			if p, ok := b.GetCell(x+1, y-1); ok {
+			if p, ok := b.getCell(x+1, y-1); ok {
 				c.neighbors = append(c.neighbors, p)
 			}
 			// left
-			if p, ok := b.GetCell(x-1, y); ok {
+			if p, ok := b.getCell(x-1, y); ok {
 				c.neighbors = append(c.neighbors, p)
 			}
 			// right
-			if p, ok := b.GetCell(x+1, y); ok {
+			if p, ok := b.getCell(x+1, y); ok {
 				c.neighbors = append(c.neighbors, p)
 			}
 			// down left
-			if p, ok := b.GetCell(x-1, y+1); ok {
+			if p, ok := b.getCell(x-1, y+1); ok {
 				c.neighbors = append(c.neighbors, p)
 			}
 			// down
-			if p, ok := b.GetCell(x, y+1); ok {
+			if p, ok := b.getCell(x, y+1); ok {
 				c.neighbors = append(c.neighbors, p)
 			}
 			// down right
-			if p, ok := b.GetCell(x+1, y+1); ok {
+			if p, ok := b.getCell(x+1, y+1); ok {
 				c.neighbors = append(c.neighbors, p)
 			}
 		}
@@ -111,7 +113,7 @@ func (b Board) Populate(k int) error {
 // returns true if click was successful and not on a black hole,
 // returns false if the user clicked on a black hole
 func (b Board) Click(x, y int) (bool, error) {
-	c, ok := b.GetCell(x, y)
+	c, ok := b.getCell(x, y)
 	if !ok {
 		return false, fmt.Errorf("cannot click on the cell, wrong coordinates")
 	}
